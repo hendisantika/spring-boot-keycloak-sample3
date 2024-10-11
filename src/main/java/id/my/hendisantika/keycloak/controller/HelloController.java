@@ -25,4 +25,10 @@ public class HelloController {
         log.info("Hello World");
         return ResponseEntity.ok("Hello");
     }
+
+    @GetMapping("/admin")
+    public ResponseEntity<String> sayHelloToAdmin() {
+        log.info("Hello Admin");
+        return ResponseEntity.ok("Hello Admin");
+    }
 }

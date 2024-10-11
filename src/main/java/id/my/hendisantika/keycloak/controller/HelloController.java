@@ -1,6 +1,8 @@
 package id.my.hendisantika.keycloak.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,4 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class HelloController {
+    @GetMapping("/hello")
+    public ResponseEntity<String> sayHello() {
+        log.info("Hello World");
+        return ResponseEntity.ok("Hello");
+    }
 }

@@ -31,4 +31,10 @@ public class HelloController {
         log.info("Hello Admin");
         return ResponseEntity.ok("Hello Admin");
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<String> sayHelloToUser() {
+        log.info("Hello User");
+        return ResponseEntity.ok("Hello User");
+    }
 }

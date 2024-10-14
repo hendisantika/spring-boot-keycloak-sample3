@@ -93,6 +93,8 @@ user management, and authorization, so developers can focus on building their ap
 3. Run keycloak compose: `docker compose up`
 4. Run the application: `mvn clean spring-boot:run`
 5. Import keycloak realm file `PowerRanger.json`
+6. Open Postman App
+7. Import Postman Collection file
 
 ### Conclusion:
 

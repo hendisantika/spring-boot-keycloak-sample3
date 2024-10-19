@@ -1,5 +1,6 @@
 package id.my.hendisantika.keycloak.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,15 +28,12 @@ import java.util.stream.Stream;
  * To change this template use File | Settings | File Templates.
  */
 @Component
+@RequiredArgsConstructor
 public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
     private final JwtConverterProperties properties;
-
-    public JwtConverter(JwtConverterProperties properties) {
-        this.properties = properties;
-    }
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {

@@ -1,5 +1,28 @@
 # spring-boot-keycloak-sample3
 
+[![Java CI with Maven](https://github.com/hendisantika/spring-boot-keycloak-sample3/actions/workflows/maven.yml/badge.svg)](https://github.com/hendisantika/spring-boot-keycloak-sample3/actions/workflows/maven.yml)
+![Java](https://img.shields.io/badge/Java-25-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.x-6DB33F?logo=springboot)
+![Keycloak](https://img.shields.io/badge/Keycloak-26-4D4D4D?logo=keycloak)
+[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot)](.github/dependabot.yml)
+
+Sample Spring Boot **OAuth2 Resource Server** secured by **Keycloak** (JWT + role-based access control).
+
+### Tech Stack
+
+| Component         | Version                         |
+|-------------------|---------------------------------|
+| Java (JDK)        | 25 (Temurin recommended)        |
+| Spring Boot       | 4.1.x                           |
+| Spring Security   | OAuth2 Resource Server (JWT)    |
+| Build tool        | Maven Wrapper (`./mvnw`)        |
+| Keycloak          | 26.x (via Docker Compose)       |
+| Lombok            | managed by Spring Boot          |
+
+> **Note (JDK 23+):** `javac` no longer runs annotation processors implicitly, so Lombok and
+> `spring-boot-configuration-processor` are registered explicitly in `maven-compiler-plugin`
+> → `annotationProcessorPaths` inside `pom.xml`.
+
 ### What is Keycloak
 
 Keycloak is an open-source identity and access management solution developed by Red Hat. It provides a centralized
@@ -86,15 +109,69 @@ user management, and authorization, so developers can focus on building their ap
 	•	Roles: Define permissions that users have within the system.
 	•	Groups: Used to group users together for easier role and permission management.
 
+### Prerequisites
+
+- JDK 25 (e.g. [Eclipse Temurin 25](https://adoptium.net/))
+- Docker & Docker Compose
+- Postman (optional, for testing the API)
+
+Verify your JDK:
+
+```shell
+java -version   # should print version "25..."
+```
+
 ### Things to do list:
 
 1. Clone this repository: `git clone https://github.com/hendisantika/spring-boot-keycloak-sample3.git`
 2. Navigate to the folder: `cd spring-boot-keycloak-sample3`
-3. Run keycloak compose: `docker compose up`
-4. Run the application: `mvn clean spring-boot:run`
+3. Run keycloak compose: `docker compose up -d`
+4. Open Keycloak admin console at http://localhost:7080 (`admin` / `admin`)
 5. Import keycloak realm file `PowerRanger.json`
-6. Open Postman App
-7. Import Postman Collection file
+6. Build & run the tests: `./mvnw clean verify`
+7. Run the application: `./mvnw spring-boot:run` (app runs on http://localhost:8080)
+8. Open Postman App
+9. Import Postman Collection file `Spring Boot Keycloak Sample 3.postman_collection.json`
+
+### API Endpoints
+
+| Method | Endpoint              | Access                     |
+|--------|-----------------------|----------------------------|
+| GET    | `/api/hello`          | Public                     |
+| GET    | `/api/admin`          | Role `admin`               |
+| GET    | `/api/user`           | Role `user`                |
+| GET    | `/api/admin-and-user` | Role `admin` or `user`     |
+
+Roles are read from the `resource_access.green_ranger.roles` claim of the JWT issued by realm `PowerRanger`.
+
+Example:
+
+```shell
+TOKEN=$(curl -s -X POST http://localhost:7080/realms/PowerRanger/protocol/openid-connect/token \
+  -d grant_type=password -d client_id=green_ranger -d client_secret=<client-secret> \
+  -d username=<username> -d password=<password> | jq -r .access_token)
+
+curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/admin
+```
+
+### Continuous Integration
+
+GitHub Actions workflow [`.github/workflows/maven.yml`](.github/workflows/maven.yml):
+
+- Runs on push / pull request to `main` and manually (`workflow_dispatch`)
+- Sets up **Temurin JDK 25** with Maven cache and runs `./mvnw -B -ntp verify`
+- Uploads Surefire test reports and the built jar as workflow artifacts
+- Least-privilege `permissions` and `concurrency` (cancels outdated runs)
+
+### Dependency Updates (Dependabot)
+
+[`.github/dependabot.yml`](.github/dependabot.yml) keeps dependencies up to date:
+
+| Ecosystem        | Schedule (Asia/Jakarta) | Notes                                                        |
+|------------------|-------------------------|--------------------------------------------------------------|
+| `maven`          | daily 05:00             | Spring updates grouped, other minor/patch updates grouped    |
+| `github-actions` | daily 05:00             | All actions grouped in a single PR                           |
+| `docker-compose` | weekly (Monday) 05:00   | Keycloak, PostgreSQL & pgAdmin images                        |
 
 ### Conclusion:
 

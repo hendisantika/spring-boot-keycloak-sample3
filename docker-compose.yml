@@ -21,7 +21,7 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
   keycloak:
-    image: quay.io/keycloak/keycloak:26.8.2-2
+    image: quay.io/keycloak/keycloak:26.8.2-3
     environment:
       KC_HOSTNAME: localhost
       KC_HOSTNAME_PORT: 7080
